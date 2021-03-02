@@ -9,7 +9,7 @@ public class prifin{
 	static BigInteger[][] valer = new BigInteger[6][];
 	static boolean valerflag = true;
 	static boolean flag = true;
-	static int loaded=0;
+	static int loaded=0; 	
 	static LinkedList<BigInteger[]> val = new LinkedList<BigInteger[]>();
 	static BigInteger lim = bb(0); 
 	static FileReader fr;

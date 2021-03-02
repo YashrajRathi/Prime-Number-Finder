@@ -1,9 +1,10 @@
-import java.io.FileReader;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
@@ -13,9 +14,8 @@ public class Main {
     public static void main(String[] args) {
 
         /*The way to get prime numbers until 10^4*/
-        getInitialShitTogether();
+//        getInitialShitTogether();
 
-        final long[] times = new long[2];
 
         /*
         * This is the part to get prime numbers until 10^8.
@@ -58,9 +58,9 @@ public class Main {
         /*
         *This is the way to get higher prime numbers (more than 10^8)
         * It is not the most optimized way but it can still work for now
-        *
-        *  */
+        */
 
+        /*final long[] times = new long[2];
         times[0] = System.currentTimeMillis();
 
         Runnable endThread = new Runnable() {
@@ -93,7 +93,14 @@ public class Main {
         executorService.execute(endThread);
 
         executorService.shutdown();
-        System.out.println("Stopped doing work");
+        System.out.println("Stopped doing work");*/
+
+        /*for(int i = 7;i<=20;i++){
+            long temp = makeFolder(i);
+            appendToLogFile(i+"=>"+temp+" milliseconds");
+        }*/
+
+        makeFolder(20);
 
     }
 
@@ -287,7 +294,7 @@ public class Main {
 
         int i = 0;
 
-        int sq = getSquareLimitForFile(i);
+        int sq = 0;
 
 //        say(sq,limit);
 
@@ -353,11 +360,11 @@ public class Main {
         }
         @Override
         public void run() {
-            System.out.println("Started filling fileNumber : " + primeFileNumber);
+//            System.out.println("Started filling fileNumber : " + primeFileNumber);
 
             writeFileNumberComparing(primeFileNumber);
 
-            System.out.println("Done filling the fileNumber : " + primeFileNumber);
+//            System.out.println("Done filling the fileNumber : " + primeFileNumber);
         }
     }
 
@@ -370,11 +377,67 @@ public class Main {
         }
         @Override
         public void run() {
-            System.out.println("Started filling fileNumber : " + primeFileNumber);
+//            System.out.println("Started filling fileNumber : " + primeFileNumber);
 
             writeFileNumber(primeFileNumber);
 
-            System.out.println("Done filling the fileNumber : " + primeFileNumber);
+//            System.out.println("Done filling the fileNumber : " + primeFileNumber);
+        }
+    }
+
+    static long makeFolder(int folderNumber){
+        System.out.println("Filling folder number : " + folderNumber);
+        long startTime = System.currentTimeMillis();
+
+        folderNumber = folderNumber * tenk;
+        int size = 10000;
+
+        anotherRunnable[] pool = new anotherRunnable[10000];
+
+        int i = 0;
+        while(i<size){
+            pool[i] = new anotherRunnable(folderNumber+i);
+            i++;
+        }
+
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+        i=0;
+        while(i<size){
+            executorService.execute(pool[i]);
+            i++;
+        }
+
+        executorService.shutdown();
+
+        try {
+            executorService.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        long endTime = System.currentTimeMillis();
+
+        endTime = endTime - startTime;
+        System.out.println("Time taken to complete action is " + endTime);
+        return endTime;
+
+    }
+
+    static void appendToLogFile(String string){
+        try {
+
+            if (!new File(FileManager.logLocation).exists()){
+                new File(FileManager.logLocation).createNewFile();
+            }
+
+            BufferedWriter out = new BufferedWriter(
+                    new FileWriter(FileManager.logLocation,true)
+            );
+            out.write(string + '\n');
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

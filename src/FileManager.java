@@ -1,12 +1,15 @@
 import javax.xml.ws.FaultAction;
 import java.io.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class FileManager {
 
     static final int tenk = 10000;
-    static final String location = "D:\\projects\\Prime Number  Finder";
+//    static final String location = "D:\\projects\\Prime Number  Finder";
+    static final String location = "D:\\projects\\Prime Number  Finder\\list_of_primes";
+    static final String logLocation = "D:\\projects\\Prime Number  Finder\\list_of_primes\\log.txt";
 
     static boolean write(ArrayList<Integer> list,int num){
 
@@ -22,6 +25,30 @@ public class FileManager {
             sb.append("#" + list.size() + '\n');
 
             for (int ii : list){
+                sb.append("" + ii + '\n');
+            }
+
+            fw.write(sb.toString());
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    static boolean write(MyLinkedList<BigInteger> list,BigInteger num){
+        String fileLocation = makeFile(num);
+        if (fileLocation.isEmpty()) return false;
+
+        try {
+            FileWriter fw = new FileWriter(fileLocation);
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("#" + list.size() + '\n');
+
+            for (BigInteger ii : list){
                 sb.append("" + ii + '\n');
             }
 
@@ -174,4 +201,63 @@ public class FileManager {
 
         return ret;
     }
+
+    static String[] getStringPrimes(int fileNumber){
+
+        String[] ret = new String[0];
+        int dd = fileNumber/tenk;
+
+        if(fileNumber==0){
+            String[][] ss = getPrimesWithSquares(0);
+            return ss[0];
+        }
+
+        String fileName = location + File.separatorChar + "n" + dd + File.separatorChar + "a" + fileNumber + ".txt" ;
+
+        try {
+            FileReader fr = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fr);
+
+            String ss = bufferedReader.readLine();
+            int length = Integer.parseInt(ss.substring(1));
+
+            ret = new String[length];
+
+            int i =0;
+
+            while (bufferedReader.ready()){
+                ret[i] = bufferedReader.readLine();
+
+                ++i;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    static String makeFile(BigInteger fileNumber){
+        BigInteger subFolderNumber = fileNumber.divide(Test.BigTenK);
+        String subDirectory = location + File.separatorChar +"n"+subFolderNumber;
+
+        if (!new File(subDirectory).exists()){
+            new File(subDirectory).mkdir();
+        }
+
+        String fileName = subDirectory + File.separatorChar + "a" + fileNumber + ".txt";
+
+        try {
+            new File(fileName).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+        return fileName;
+    }
+
 }

@@ -23,7 +23,7 @@ public class Test{
         BigInteger bb = new BigInteger("10005");
         System.out.println(bb + " is prime ? " + checkIfPrime(bb,arr));*/
 
-        makeAFolder(new BigInteger("20"));
+        makeAFolder(new BigInteger("10000000"));
 
     }
 
@@ -134,7 +134,7 @@ public class Test{
 
         for (String ss:arr) {
             BigInteger remainder = num.mod(new BigInteger(ss));
-            if (remainder.equals(zero)){
+            if (remainder.signum() == 0){
                 return false;
             }
         }
